@@ -7,6 +7,7 @@
         <entry key="app/src/main/res/drawable/ic_sport_selected.xml" value="0.111" />
         <entry key="app/src/main/res/drawable/ic_sport_selector.xml" value="0.111" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_url_opner.xml" value="0.2078125" />
         <entry key="app/src/main/res/layout/fragment_music.xml" value="0.2390625" />
         <entry key="app/src/main/res/layout/fragment_news.xml" value="0.2" />
         <entry key="app/src/main/res/layout/fragment_sport.xml" value="0.22395833333333334" />

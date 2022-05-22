@@ -1,5 +1,6 @@
 package com.mohamed.theguadiannews.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,9 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.mohamed.theguadiannews.Model
-import com.mohamed.theguadiannews.MyAdapter
-import com.mohamed.theguadiannews.R
+import com.mohamed.theguadiannews.*
 import com.mohamed.theguadiannews.databinding.FragmentNewsBinding
 import org.json.JSONObject
 import org.json.JSONTokener
@@ -77,8 +76,14 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         ///// Listener
         adapter.setOnItemClickListener(object : MyAdapter.OnItemClickListener{
             override fun onItemClick(position: Int) {
-                val imdbID : String = dataList[position].webTitle
-                Toast.makeText(context, "Imdb ID : $imdbID",Toast.LENGTH_SHORT).show()
+                val newsUrl : String = dataList[position].webUrl
+                //Toast.makeText(context, newsUrl,Toast.LENGTH_SHORT).show()
+
+                val intent = Intent(context, UrlOpener::class.java)
+                intent.putExtra("url",newsUrl)
+                startActivity(intent)
+
+
             }
         })
         //endregion
@@ -127,6 +132,10 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
             val webTitle = jsonArray.getJSONObject(i).getString("webTitle")
             Log.i("webTitle ", webTitle)
 
+            // webUrl
+            val webUrl = jsonArray.getJSONObject(i).getString("webUrl")
+            Log.i("webUrl ", webUrl)
+
             // webPublicationDate
             val webPublicationDate = jsonArray.getJSONObject(i).getString("webPublicationDate")
             Log.i("date", webPublicationDate)
@@ -140,7 +149,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
             } catch (e: Exception) {
             }
 
-            dataList.add(Model(webTitle, date, thumbnail))
+            dataList.add(Model(webTitle, date, thumbnail,webUrl))
 
             adapter.notifyDataSetChanged()
            // rvSetup()
