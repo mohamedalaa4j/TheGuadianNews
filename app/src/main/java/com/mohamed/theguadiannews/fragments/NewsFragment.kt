@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
@@ -26,6 +27,10 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
     private var dataList = ArrayList<Model>()
 
+    var page = 1
+    var totalPages = 1
+    var isLoading = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentNewsBinding.bind(view)
@@ -39,7 +44,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         val queue = Volley.newRequestQueue(context)
 
         val url =
-            "https://content.guardianapis.com/search?q=&show-fields=thumbnail&order-by=newest&api-key=43f906b3-25e9-4762-9233-29811f58038b"
+            "https://content.guardianapis.com/search?q=&show-fields=thumbnail&order-by=newest&page=${page}&api-key=43f906b3-25e9-4762-9233-29811f58038b"
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.GET, url, null,
@@ -65,6 +70,9 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
         val responseObjectAsJsonObject = JSONTokener(responseObject).nextValue() as JSONObject
 
+        val pages = responseObjectAsJsonObject.getString("pages")
+        totalPages = pages.toInt()
+
         val jsonArray = responseObjectAsJsonObject.getJSONArray("results")
 
         for (i in 0 until jsonArray.length()) {
@@ -75,17 +83,18 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
             // webPublicationDate
             val webPublicationDate = jsonArray.getJSONObject(i).getString("webPublicationDate")
+            Log.i("date", webPublicationDate)
             val date = parseDate(webPublicationDate)
 
-            var thumbnail  = ""
+            var thumbnail = ""
             try {
                 val fields = jsonArray.getJSONObject(i).getJSONObject("fields")
-                 thumbnail = fields.getString("thumbnail")
+                thumbnail = fields.getString("thumbnail")
                 Log.i("tt", thumbnail)
-            }catch(e: Exception) {
+            } catch (e: Exception) {
             }
 
-                dataList.add(Model(webTitle,date,thumbnail))
+            dataList.add(Model(webTitle, date, thumbnail))
 
             rvSetup()
 
@@ -96,18 +105,49 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
 
         // Set the LayoutManager that this RecyclerView will use.
-        binding?.rv?.layoutManager = LinearLayoutManager(context)
+        val linearLayoutManager = LinearLayoutManager(context)
+        binding?.rv?.layoutManager = linearLayoutManager
         // adapter instance is set to the recyclerview to inflate the items.
         val adapter = MyAdapter(dataList)
         binding?.rv?.adapter = adapter
+
+        /////////
+        binding?.rv?.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0){
+                    val visibleItemCount = linearLayoutManager.childCount
+                    val pastVisibleItem = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
+                    val total = adapter.itemCount
+
+                    if (!isLoading){
+
+                        if ((visibleItemCount + pastVisibleItem) >= total){
+                            Toast.makeText(context, "end", Toast.LENGTH_SHORT).show()
+
+                            if (totalPages > page) {
+                                page++
+                            }else{isLoading = true}
+                            isLoading = true
+                            apiCall()
+                            isLoading = false
+                        }
+                    }
+                }
+                super.onScrolled(recyclerView, dx, dy)
+            }
+        })
+        /////////
+
+
     }
 
-        private fun parseDate(date: String): String {
+    private fun parseDate(date: String): String {
 
-                val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
-                val mDate = formatter.parse(date)
-            return mDate!!.toString().take(10)
+        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
+       val mDate = formatter.parse(date)
+      //  Log.i("datep", mDate.toString())
+        return mDate!!.toString().take(10)
 
-        }
+    }
 
 }

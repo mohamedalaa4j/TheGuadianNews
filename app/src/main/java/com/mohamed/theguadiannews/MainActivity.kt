@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
+        replaceFragment(newsFragment)
+
         binding?.bottomNavigationView?.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.news -> replaceFragment(newsFragment)
