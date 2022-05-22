@@ -74,6 +74,13 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
             }
         })
         //endregion
+        ///// Listener
+        adapter.setOnItemClickListener(object : MyAdapter.OnItemClickListener{
+            override fun onItemClick(position: Int) {
+                val imdbID : String = dataList[position].webTitle
+                Toast.makeText(context, "Imdb ID : $imdbID",Toast.LENGTH_SHORT).show()
+            }
+        })
         //endregion
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
