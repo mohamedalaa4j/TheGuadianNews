@@ -15,6 +15,10 @@ import com.mohamed.theguadiannews.R
 import com.mohamed.theguadiannews.databinding.FragmentNewsBinding
 import org.json.JSONObject
 import org.json.JSONTokener
+import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class NewsFragment : Fragment(R.layout.fragment_news) {
@@ -62,7 +66,6 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         val responseObjectAsJsonObject = JSONTokener(responseObject).nextValue() as JSONObject
 
         val jsonArray = responseObjectAsJsonObject.getJSONArray("results")
-        Log.i("ss", jsonArray.toString())
 
         for (i in 0 until jsonArray.length()) {
 
@@ -70,14 +73,19 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
             val webTitle = jsonArray.getJSONObject(i).getString("webTitle")
             Log.i("webTitle ", webTitle)
 
-            val fields = jsonArray.getJSONObject(i).getString("fields")
-            val fieldsJsonObject = JSONTokener(fields).nextValue() as JSONObject
+            // webPublicationDate
+            val webPublicationDate = jsonArray.getJSONObject(i).getString("webPublicationDate")
+            val date = parseDate(webPublicationDate)
 
-            // thumbnail
-            val thumbnail = fieldsJsonObject.getString("thumbnail")
-            Log.i("thumbnail ", thumbnail)
+            var thumbnail  = ""
+            try {
+                val fields = jsonArray.getJSONObject(i).getJSONObject("fields")
+                 thumbnail = fields.getString("thumbnail")
+                Log.i("tt", thumbnail)
+            }catch(e: Exception) {
+            }
 
-            dataList.add(Model(webTitle,thumbnail))
+                dataList.add(Model(webTitle,date,thumbnail))
 
             rvSetup()
 
@@ -93,4 +101,13 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         val adapter = MyAdapter(dataList)
         binding?.rv?.adapter = adapter
     }
+
+        private fun parseDate(date: String): String {
+
+                val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
+                val mDate = formatter.parse(date)
+            return mDate!!.toString().take(10)
+
+        }
+
 }

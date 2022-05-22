@@ -7,4 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="apple_red">#F02C54</color>
+    <color name="apple_black">#262626</color>
+    <color name="apple_gray">#989799</color>
+    <color name="apple_background">#fdfdfe</color>
+
 </resources>

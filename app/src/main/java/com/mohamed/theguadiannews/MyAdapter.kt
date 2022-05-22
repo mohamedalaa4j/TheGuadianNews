@@ -11,12 +11,11 @@ class MyAdapter(
 ) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
 
-
     ///// ViewHolder class using ViewBinding instead of View
     class ViewHolder(binding: RvItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val title = binding.tvTitle
+        val date = binding.tvDate
         val iv = binding.iv
-
 
 
     }
@@ -31,9 +30,14 @@ class MyAdapter(
 
         ///// Assign the views value
         holder.title.text = item.webTitle
+        holder.date.text = item.webPublicationDate
 
         val imageTarget = item.thumbnail
-        Picasso.get().load(imageTarget).fit().into(holder.iv)
+        if (imageTarget.isNotEmpty()) {
+            Picasso.get().load(imageTarget).fit().into(holder.iv)
+        } else {
+            Picasso.get().load(R.drawable.no_image).fit().into(holder.iv)
+        }
 
     }
 
