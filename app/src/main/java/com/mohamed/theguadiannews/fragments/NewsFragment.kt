@@ -30,12 +30,51 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
     var page = 1
     var totalPages = 1
     var isLoading = false
+    val adapter = MyAdapter(dataList)
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentNewsBinding.bind(view)
 
         apiCall()
+
+        //region RecyclerView
+
+        // Set the LayoutManager that this RecyclerView will use.
+        val linearLayoutManager = LinearLayoutManager(context)
+        binding?.rv?.layoutManager = linearLayoutManager
+        // adapter instance is set to the recyclerview to inflate the items.
+        //val adapter = MyAdapter(dataList)
+        binding?.rv?.adapter = adapter
+
+        /////region Endless RV code
+        binding?.rv?.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0){
+                    val visibleItemCount = linearLayoutManager.childCount
+                    val pastVisibleItem = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
+                    val total = adapter.itemCount
+
+                    if (!isLoading){
+
+                        if ((visibleItemCount + pastVisibleItem) >= total){
+                            //Toast.makeText(context, "end", Toast.LENGTH_SHORT).show()
+
+                            if (totalPages > page) {
+                                page++
+                            }else{isLoading = true}
+                            isLoading = true
+                            apiCall()
+                            isLoading = false
+                        }
+                    }
+                }
+                super.onScrolled(recyclerView, dx, dy)
+            }
+        })
+        //endregion
+        //endregion
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -96,50 +135,51 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
             dataList.add(Model(webTitle, date, thumbnail))
 
-            rvSetup()
+            adapter.notifyDataSetChanged()
+           // rvSetup()
 
         }
     }
 
-    private fun rvSetup() {
-
-
-        // Set the LayoutManager that this RecyclerView will use.
-        val linearLayoutManager = LinearLayoutManager(context)
-        binding?.rv?.layoutManager = linearLayoutManager
-        // adapter instance is set to the recyclerview to inflate the items.
-        val adapter = MyAdapter(dataList)
-        binding?.rv?.adapter = adapter
-
-        /////////
-        binding?.rv?.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0){
-                    val visibleItemCount = linearLayoutManager.childCount
-                    val pastVisibleItem = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
-                    val total = adapter.itemCount
-
-                    if (!isLoading){
-
-                        if ((visibleItemCount + pastVisibleItem) >= total){
-                            Toast.makeText(context, "end", Toast.LENGTH_SHORT).show()
-
-                            if (totalPages > page) {
-                                page++
-                            }else{isLoading = true}
-                            isLoading = true
-                            apiCall()
-                            isLoading = false
-                        }
-                    }
-                }
-                super.onScrolled(recyclerView, dx, dy)
-            }
-        })
-        /////////
-
-
-    }
+//    private fun rvSetup() {
+//
+//
+//        // Set the LayoutManager that this RecyclerView will use.
+//        val linearLayoutManager = LinearLayoutManager(context)
+//        binding?.rv?.layoutManager = linearLayoutManager
+//        // adapter instance is set to the recyclerview to inflate the items.
+//        val adapter = MyAdapter(dataList)
+//        binding?.rv?.adapter = adapter
+//
+//        /////////
+//        binding?.rv?.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                if (dy > 0){
+//                    val visibleItemCount = linearLayoutManager.childCount
+//                    val pastVisibleItem = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
+//                    val total = adapter.itemCount
+//
+//                    if (!isLoading){
+//
+//                        if ((visibleItemCount + pastVisibleItem) >= total){
+//                            Toast.makeText(context, "end", Toast.LENGTH_SHORT).show()
+//
+//                            if (totalPages > page) {
+//                                page++
+//                            }else{isLoading = true}
+//                            isLoading = true
+//                            apiCall()
+//                            isLoading = false
+//                        }
+//                    }
+//                }
+//                super.onScrolled(recyclerView, dx, dy)
+//            }
+//        })
+//        /////////
+//
+//
+//    }
 
     private fun parseDate(date: String): String {
 
