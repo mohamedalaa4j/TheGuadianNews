@@ -30,4 +30,13 @@
         <item name="android:windowLightStatusBar">true</item>
 
     </style>
+
+    <style name="ThemeOverlay.Toobar" parent="ThemeOverlay.AppCompat.Light">
+        <!-- Text color -->
+        <item name="android:editTextColor">@color/apple_black</item>
+        <!-- Hint text color -->
+        <item name="android:textColorHint">@color/apple_black</item>
+    </style>
+
+
 </resources>
