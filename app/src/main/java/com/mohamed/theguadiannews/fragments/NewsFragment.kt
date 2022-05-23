@@ -1,5 +1,6 @@
 package com.mohamed.theguadiannews.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
@@ -35,6 +37,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
     var isLoading = false
     val adapter = MyAdapter(dataList)
     var searchKeyword = ""
+
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,9 +76,15 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
                 //apiCallSearch()
                 return false
 
+
             }
+
+
         })
+
         //endregion
+
+
 
         binding?.shimmerFrameLayout?.startShimmer()
         binding?.shimmerFrameLayout?.visibility = View.VISIBLE
@@ -148,6 +157,13 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
             }
         })
         //endregion
+
+        binding?.toolBar?.tvCancel?.setOnClickListener {
+            binding?.toolBar?.tvCancel?.clearFocus()
+            binding?.toolBar?.searchBar?.setQuery("", false)
+            dataList.clear()
+            apiCall()
+        }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -179,7 +195,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         val queue = Volley.newRequestQueue(context)
 
         val url =
-            "https://content.guardianapis.com/search?q=$searchKeyword&show-fields=thumbnail&order-by=newest&page-size=50&api-key=43f906b3-25e9-4762-9233-29811f58038b"
+            "https://content.guardianapis.com/search?q=$searchKeyword&show-fields=thumbnail&order-by=relevance&page-size=50&api-key=43f906b3-25e9-4762-9233-29811f58038b"
         Log.i("link",url)
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.GET, url, null,

@@ -5,7 +5,7 @@
     android:tint="#EBEBEB"
     >
 
-    <corners android:radius="20dp"/>
+    <corners android:radius="11dp"/>
 
 
 

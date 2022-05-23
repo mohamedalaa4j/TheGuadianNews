@@ -11,14 +11,32 @@
     android:background="@color/apple_background"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <TextView
+        android:id="@+id/tvCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:layout_gravity="end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="30dp"
+        android:textSize="18sp"
+        android:fontFamily="@font/san_franciso"
+        android:textStyle="bold"
+        android:textColor="@color/apple_red"
+        />
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchBar"
         app:iconifiedByDefault="false"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@drawable/search_bar_background"
-        android:layout_marginEnd="105dp"
+        android:layout_marginEnd="1dp"
         app:searchIcon="@drawable/search_icon"
         android:theme="@style/ThemeOverlay.Toobar"
+        app:closeIcon="@drawable/ic_cancel"
         />
+
+
+
 </androidx.appcompat.widget.Toolbar>
