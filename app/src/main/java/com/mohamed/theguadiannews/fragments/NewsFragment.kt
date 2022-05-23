@@ -153,7 +153,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
             Request.Method.GET, url, null,
             { response ->
 
-                parse(response.toString())
+                parseSearch(response.toString())
 
             },
             { error ->
@@ -167,6 +167,53 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
 
     private fun parse(data: String) {
+
+        //dataList.clear()
+
+        val jsonObject = JSONTokener(data).nextValue() as JSONObject
+        val responseObject = jsonObject.getString("response")
+
+        val responseObjectAsJsonObject = JSONTokener(responseObject).nextValue() as JSONObject
+
+        val pages = responseObjectAsJsonObject.getString("pages")
+        totalPages = pages.toInt()
+
+        val jsonArray = responseObjectAsJsonObject.getJSONArray("results")
+
+        for (i in 0 until jsonArray.length()) {
+
+            // webTitle
+            val webTitle = jsonArray.getJSONObject(i).getString("webTitle")
+            Log.i("webTitle ", webTitle)
+
+            // webUrl
+            val webUrl = jsonArray.getJSONObject(i).getString("webUrl")
+            Log.i("webUrl ", webUrl)
+
+            // webPublicationDate
+            val webPublicationDate = jsonArray.getJSONObject(i).getString("webPublicationDate")
+            Log.i("date", webPublicationDate)
+            val date = parseDate(webPublicationDate)
+
+            var thumbnail = ""
+            try {
+                val fields = jsonArray.getJSONObject(i).getJSONObject("fields")
+                thumbnail = fields.getString("thumbnail")
+                Log.i("tt", thumbnail)
+            } catch (e: Exception) {
+            }
+
+
+            dataList.add(Model(webTitle, date, thumbnail, webUrl))
+            adapter.notifyDataSetChanged()
+
+            // rvSetup()
+
+        }
+
+    }
+
+    private fun parseSearch(data: String) {
 
         dataList.clear()
 
@@ -205,11 +252,12 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
 
             dataList.add(Model(webTitle, date, thumbnail, webUrl))
-
             adapter.notifyDataSetChanged()
+
             // rvSetup()
 
         }
+
     }
 
 
