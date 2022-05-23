@@ -2,6 +2,8 @@ package com.mohamed.theguadiannews.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
@@ -39,6 +41,9 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentNewsBinding.bind(view)
 
+        binding?.shimmerFrameLayout?.stopShimmer()
+        binding?.shimmerFrameLayout?.visibility = View.INVISIBLE
+        binding?.toolBar?.searchBar?.clearFocus()
 
         //region SearchView Listener
         binding?.toolBar?.searchBar?.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
@@ -49,21 +54,39 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
                // Toast.makeText(context, binding?.toolBar?.searchBar?.query, Toast.LENGTH_SHORT).show()
                 searchKeyword = binding?.toolBar?.searchBar?.query.toString()
                 Log.i("search", searchKeyword)
+
+                binding?.rv?.visibility = View.INVISIBLE
+                binding?.shimmerFrameLayout?.startShimmer()
+                binding?.shimmerFrameLayout?.visibility = View.VISIBLE
                 apiCallSearch()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    binding?.shimmerFrameLayout?.stopShimmer()
+                    binding?.shimmerFrameLayout?.visibility = View.GONE
+                    binding?.rv?.visibility = View.VISIBLE
+                }, 1000)
                 return false
             }
 
             override fun onQueryTextChange(p0: String?): Boolean {
                 searchKeyword = binding?.toolBar?.searchBar?.query.toString()
                 Log.i("search", searchKeyword)
-                apiCallSearch()
+                //apiCallSearch()
                 return false
 
             }
         })
         //endregion
 
+        binding?.shimmerFrameLayout?.startShimmer()
+        binding?.shimmerFrameLayout?.visibility = View.VISIBLE
+
         apiCall()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding?.shimmerFrameLayout?.stopShimmer()
+            binding?.shimmerFrameLayout?.visibility = View.GONE
+            binding?.rv?.visibility = View.VISIBLE
+        }, 1500)
 
         //region RecyclerView
 
@@ -93,7 +116,16 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
                                 isLoading = true
                             }
                             isLoading = true
+                           // apiCall()
+                            binding?.rv?.visibility = View.INVISIBLE
+                            binding?.shimmerFrameLayout?.startShimmer()
+                            binding?.shimmerFrameLayout?.visibility = View.VISIBLE
                             apiCall()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                binding?.shimmerFrameLayout?.stopShimmer()
+                                binding?.shimmerFrameLayout?.visibility = View.GONE
+                                binding?.rv?.visibility = View.VISIBLE
+                            }, 1500)
                             isLoading = false
                         }
                     }
