@@ -29,6 +29,8 @@ import kotlin.collections.ArrayList
 class MusicFragment : Fragment(R.layout.fragment_music) {
   private var binding : FragmentMusicBinding? = null
 
+    //region Variables
+
     private var dataList = ArrayList<Model>()
 
     var page = 1
@@ -37,12 +39,13 @@ class MusicFragment : Fragment(R.layout.fragment_music) {
     var isLoading = false
     val adapter = MyAdapter(dataList)
     var searchKeyword = ""
-
+    //endregion
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMusicBinding.bind(view)
 
+        ///// Stop automatic starting ShimmerEffect
         binding?.shimmerFrameLayout?.stopShimmer()
         binding?.shimmerFrameLayout?.visibility = View.INVISIBLE
         binding?.toolBar?.searchBar?.clearFocus()
@@ -79,11 +82,13 @@ class MusicFragment : Fragment(R.layout.fragment_music) {
         })
         //endregion
 
+        ///// Start ShimmerEffect with apiCall()
         binding?.shimmerFrameLayout?.startShimmer()
         binding?.shimmerFrameLayout?.visibility = View.VISIBLE
 
         apiCall()
 
+        ///// Stop ShimmerEffect the response
         Handler(Looper.getMainLooper()).postDelayed({
             binding?.shimmerFrameLayout?.stopShimmer()
             binding?.shimmerFrameLayout?.visibility = View.GONE
@@ -159,6 +164,7 @@ class MusicFragment : Fragment(R.layout.fragment_music) {
         }
 
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun onResume() {
         super.onResume()
@@ -200,6 +206,7 @@ class MusicFragment : Fragment(R.layout.fragment_music) {
 
     }
 
+    ///// Api Call with user's search keyword
     private fun apiCallSearch() {
 
         val queue = Volley.newRequestQueue(context)
@@ -271,6 +278,7 @@ class MusicFragment : Fragment(R.layout.fragment_music) {
 
     }
 
+    ///// parse function for apiCallSearch()
     private fun parseSearch(data: String) {
 
         dataList.clear()

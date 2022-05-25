@@ -34,6 +34,7 @@ class SportFragment : Fragment(R.layout.fragment_sport) {
 
     private var dataList = ArrayList<Model>()
 
+    //region Variables
 
     var page = 1
     var totalPages = 1
@@ -41,11 +42,14 @@ class SportFragment : Fragment(R.layout.fragment_sport) {
     var isLoading = false
     val adapter = MyAdapter(dataList)
     var searchKeyword = ""
+    //endregion
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSportBinding.bind(view)
 
+        ///// Stop automatic starting ShimmerEffect
         binding?.shimmerFrameLayout?.stopShimmer()
         binding?.shimmerFrameLayout?.visibility = View.INVISIBLE
         binding?.toolBar?.searchBar?.clearFocus()
@@ -82,11 +86,13 @@ class SportFragment : Fragment(R.layout.fragment_sport) {
         })
         //endregion
 
+        ///// Start ShimmerEffect with apiCall()
         binding?.shimmerFrameLayout?.startShimmer()
         binding?.shimmerFrameLayout?.visibility = View.VISIBLE
 
         apiCall()
 
+        ///// Stop ShimmerEffect the response
         Handler(Looper.getMainLooper()).postDelayed({
             binding?.shimmerFrameLayout?.stopShimmer()
             binding?.shimmerFrameLayout?.visibility = View.GONE
@@ -162,6 +168,7 @@ class SportFragment : Fragment(R.layout.fragment_sport) {
         }
 
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun onResume() {
         super.onResume()
@@ -185,7 +192,7 @@ class SportFragment : Fragment(R.layout.fragment_sport) {
 
         val url =
             // "https://content.guardianapis.com/search?q=&show-fields=thumbnail&order-by=newest&page=${page}&api-key=43f906b3-25e9-4762-9233-29811f58038b"
-            "https://content.guardianapis.com/search?section=sport&q=&page=$page&show-fields=thumbnail&order-by=relevance&page-size=50&api-key=43f906b3-25e9-4762-9233-29811f58038b"
+            "https://content.guardianapis.com/search?section=sport&show-fields=thumbnail&order-by=newest&page=$page&api-key=43f906b3-25e9-4762-9233-29811f58038b"
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.GET, url, null,
@@ -203,6 +210,7 @@ class SportFragment : Fragment(R.layout.fragment_sport) {
 
     }
 
+    ///// Api Call with user's search keyword
     private fun apiCallSearch() {
 
         val queue = Volley.newRequestQueue(context)
@@ -274,6 +282,7 @@ class SportFragment : Fragment(R.layout.fragment_sport) {
 
     }
 
+    ///// parse function for apiCallSearch()
     private fun parseSearch(data: String) {
 
         dataList.clear()

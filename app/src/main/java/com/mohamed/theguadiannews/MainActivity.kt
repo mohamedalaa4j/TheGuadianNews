@@ -20,8 +20,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
+        ///// Display newsFragment by default
         replaceFragment(newsFragment)
 
+        ///// bottomNavigationView listener
         binding?.bottomNavigationView?.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.news -> replaceFragment(newsFragment)

@@ -1,6 +1,5 @@
 package com.mohamed.theguadiannews.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
@@ -29,6 +27,8 @@ import kotlin.collections.ArrayList
 class NewsFragment : Fragment(R.layout.fragment_news) {
     private var binding: FragmentNewsBinding? = null
 
+    //region Variables
+
     private var dataList = ArrayList<Model>()
 
     var page = 1
@@ -37,13 +37,14 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
     var isLoading = false
     val adapter = MyAdapter(dataList)
     var searchKeyword = ""
-
+    //endregion
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentNewsBinding.bind(view)
 
+        ///// Stop automatic starting ShimmerEffect
         binding?.shimmerFrameLayout?.stopShimmer()
         binding?.shimmerFrameLayout?.visibility = View.INVISIBLE
         binding?.toolBar?.searchBar?.clearFocus()
@@ -84,13 +85,13 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
         //endregion
 
-
-
+        ///// Start ShimmerEffect with apiCall()
         binding?.shimmerFrameLayout?.startShimmer()
         binding?.shimmerFrameLayout?.visibility = View.VISIBLE
 
         apiCall()
 
+        ///// Stop ShimmerEffect the response
         Handler(Looper.getMainLooper()).postDelayed({
             binding?.shimmerFrameLayout?.stopShimmer()
             binding?.shimmerFrameLayout?.visibility = View.GONE
@@ -153,7 +154,6 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
                 intent.putExtra("url", newsUrl)
                 startActivity(intent)
 
-
             }
         })
         //endregion
@@ -166,6 +166,21 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    override fun onResume() {
+        super.onResume()
+        binding?.rv?.visibility = View.INVISIBLE
+        binding?.shimmerFrameLayout?.startShimmer()
+        binding?.shimmerFrameLayout?.visibility = View.VISIBLE
+        //  apiCall()
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding?.shimmerFrameLayout?.stopShimmer()
+            binding?.shimmerFrameLayout?.visibility = View.GONE
+            binding?.rv?.visibility = View.VISIBLE
+        }, 800)
+
+
+    }
 
     private fun apiCall() {
 
@@ -190,6 +205,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
     }
 
+    ///// Api Call with user's search keyword
     private fun apiCallSearch() {
 
         val queue = Volley.newRequestQueue(context)
@@ -261,6 +277,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
     }
 
+    ///// parse function for apiCallSearch()
     private fun parseSearch(data: String) {
 
         dataList.clear()
@@ -307,7 +324,6 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         }
 
     }
-
 
     private fun parseDate(date: String): String {
 
